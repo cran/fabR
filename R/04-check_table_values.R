@@ -25,22 +25,24 @@
 #'
 #' }
 #'
-#' @import dplyr
-#' @importFrom magrittr %>%
+#' @import dplyr tidyr
 #' @importFrom rlang .data
 #' @export
 get_duplicated_cols <- function(tbl){
 
-  test <- tibble(condition = as.character(), name_var = as.character() )
+  test <- tibble(condition = as.character(), name_var = as.character())
   if(tbl %>% nrow() == 0) return(test)
 
-  test <-
+  sample_num <- ifelse(nrow(tbl) > 500,500,nrow(test))
+
+  test1 <-
     bind_rows(
       tbl %>% janitor::remove_empty("cols") %>%
-        slice_sample(n = 10, replace = TRUE)) %>%
+        mutate(across(everything(), as.character)) %>%
+        slice_sample(n = sample_num, replace = TRUE)) %>%
     rowwise() %>%
-    mutate_all(~ digest::digest(.,algo = "md5")) %>%
-    mutate_all(~ stringr::str_sub(., 1, 2)) %>%
+    mutate(across(everything(), ~ digest::digest(.,algo = "md5"))) %>%
+    mutate(across(everything(), ~ stringr::str_sub(., 1, 5))) %>%
     ungroup() %>%
     summarise_all(~ paste0(.,collapse = "")) %>%
     tidyr::pivot_longer(
@@ -49,7 +51,34 @@ get_duplicated_cols <- function(tbl){
       values_to = "col_1") %>%
     group_by(.data$col_1) %>%
     add_count() %>%
-    filter(n > 1) %>%
+    filter(n > 1)
+
+  if(nrow(test1) > 0){
+
+    test2 <-
+      bind_rows(
+        tbl %>%
+          select(all_of(test1$condition)) %>%
+          mutate(across(everything(), as.character))) %>%
+      rowwise() %>%
+      mutate(across(everything(), ~ digest::digest(.,algo = "md5"))) %>%
+      mutate(across(everything(), ~ stringr::str_sub(., 1, 5))) %>%
+      ungroup() %>%
+      summarise_all(~ paste0(.,collapse = "")) %>%
+      tidyr::pivot_longer(
+        everything(),
+        names_to = "condition",
+        values_to = "col_1") %>%
+      group_by(.data$col_1) %>%
+      add_count() %>%
+      filter(n > 1)
+
+    test <- test2
+
+  }else{ test <- test1 }
+
+  test <-
+    test %>%
     group_by(.data$col_1) %>%
     summarise(
       across(
@@ -96,10 +125,15 @@ get_duplicated_cols <- function(tbl){
 #' library(dplyr)
 #' get_duplicated_rows(bind_rows(mtcars,mtcars[1,]))
 #'
+#' get_duplicated_rows(
+#'   tbl = bind_rows(mtcars,mtcars[1,]) %>%
+#'         add_index() %>%
+#'         mutate(index = paste0('obs_',index)),
+#'   id_col = 'index')
+#'
 #' }
 #'
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 get_duplicated_rows <- function(tbl, id_col = NULL){
@@ -110,31 +144,52 @@ get_duplicated_rows <- function(tbl, id_col = NULL){
   test <- tbl %>% janitor::remove_empty("cols")
 
   if(is.null(id_col)) {
-    tbl <- tbl %>% ungroup %>% add_index("__Mlstr_index__")
-    test <- test %>% add_index("__Mlstr_index__")
+    tbl <- tbl %>% ungroup %>% add_index("__Mlstr_index__",.force = TRUE)
+    test <- test %>% add_index("__Mlstr_index__",.force = TRUE)
   }else{
 
     tbl  <- tbl %>% ungroup %>% select(!! id_col, everything())
     test <- tbl %>% ungroup %>% select(!! id_col, everything())
   }
 
-  test <-
+  sample_num <- ifelse(ncol(test) > 20,20,ncol(test))
+
+  test1 <-
     test %>%
-    select(sample(seq_along(2:length(test)), 50, replace = TRUE)) %>%
+    select(1, sample(seq_along(2:ncol(test))+1, sample_num, replace = TRUE)) %>%
     rowwise() %>%
-    mutate_all(~ digest::digest(.,algo = "md5")) %>%
-    mutate_all(~ stringr::str_sub(., 1, 2)) %>%
-    tidyr::unite(col = "row_duplicate", sep = "") %>%
-    mutate(id_duplicate = tbl[[1]]) %>%
-    select(2, 1) %>%
+    mutate(across(-1, ~ digest::digest(.,algo = "md5"))) %>%
+    mutate(across(-1, ~ stringr::str_sub(., 1, 5))) %>%
+    tidyr::unite(-1, col = "row_duplicate", sep = "") %>%
     group_by(.data$row_duplicate) %>%
     add_count() %>%
-    filter(n > 1) %>%
+    filter(n > 1)
+
+  if(nrow(test1) > 0){
+    test2 <-
+      test %>%
+      filter(if_any(.cols = 1, ~ . %in% c(unique(test1[[1]])))) %>%
+      # select(-1) %>%
+      rowwise() %>%
+      mutate(across(-1, ~ digest::digest(.,algo = "md5"))) %>%
+      mutate(across(-1, ~ stringr::str_sub(., 1, 5))) %>%
+      tidyr::unite(-1, col = "row_duplicate", sep = "") %>%
+      # select(2, 1) %>%
+      group_by(.data$row_duplicate) %>%
+      add_count() %>%
+      filter(n > 1)
+
+    test <- test2
+
+  }else{ test <- test1 }
+
+  test <-
+    test %>%
     group_by(.data$row_duplicate) %>%
     summarise_all(
-      ~ paste("[INFO] - Possible duplicated observations:",
+      ~ paste("[INFO] - Duplicated observations :",
               paste0(., collapse = " ; "))) %>%
-    ungroup() %>% select(condition = .data$id_duplicate)
+    ungroup() %>% select(condition = 2)
 
   return(test)
 }
@@ -167,7 +222,6 @@ get_duplicated_rows <- function(tbl, id_col = NULL){
 #' }
 #'
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 get_all_na_cols <- function(tbl){
@@ -193,6 +247,10 @@ get_all_na_cols <- function(tbl){
 #' values for all observations.
 #'
 #' @param tbl R object(dataframe or tibble) of the input tibble
+#' @param id_col A character string specifying the column to ignore in
+#' identification of repeated observations. If NULL (by default), all of the
+#' columns will be taken in account for repeated observation identification.
+#' The row number will be used to identify those observations.
 #'
 #' @return
 #' A vector string indicating either that the tibble does not have empty
@@ -208,28 +266,41 @@ get_all_na_cols <- function(tbl){
 #' ##### Example 2 -------------------------------------------------------------
 #' # One row doesn't have any observations
 #' library(dplyr)
-#' get_all_na_rows(bind_rows(iris, tibble(Species = NA)))
+#' get_all_na_rows(bind_rows(iris, tibble(Species = c(NA,NA))))
+#' get_all_na_rows(bind_rows(iris, tibble(Species =  c('an_id', 'another_id'))),
+#'                 id_col = 'Species')
 #'
 #' }
 #'
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
-get_all_na_rows <- function(tbl){
+get_all_na_rows <- function(tbl, id_col = NULL){
+
+  test <- tibble(condition = as.character(), name_var = as.character())
+  if(tbl %>% nrow() == 0) return(test)
+
+  if(is.null(id_col)) {
+    tbl <- tbl %>% ungroup %>% add_index("__Mlstr_index__",.force = TRUE)
+  }else{
+    tbl  <- tbl %>% ungroup %>% select(!! id_col, everything())
+  }
 
   # identify participants containing all NA's exept ID
   test <- tbl %>% select(-1)
   test <- test %>% mutate(is_na = rowSums(is.na(test)))
   test <-
     test %>%
+    tibble %>%
     mutate(is_na = ncol(test) - .data$is_na) %>%
     bind_cols(tbl[1]) %>%
     filter(.data$is_na == 1) %>%
-    select(participant = last_col()) %>%
+    select(value = last_col()) %>%
+    mutate(value = as.character(.data$`value`)) %>%
     mutate(
-      participant = toString(.data$`participant`),
-      condition = "[INFO] - Empty observation")
+      condition = "[INFO] - Empty observation") %>%
+    distinct
+
   return(test)
 }
 
@@ -260,10 +331,14 @@ get_all_na_rows <- function(tbl){
 #' }
 #'
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 get_unique_value_cols <- function(tbl){
+
+  test <- tibble(condition = as.character(), name_var = as.character())
+  if(tbl %>% nrow() == 0) return(test)
+
+  tbl <- tbl %>% mutate(across(everything(),as.character))
 
   # identify columns containing one value
   test <-
@@ -272,6 +347,12 @@ get_unique_value_cols <- function(tbl){
       cols = everything(),
       names_to = "name_col",
       values_to = "condition") %>%
+    rowwise() %>%
+    mutate(
+      value =
+        ifelse(.data$condition == 1,
+               toString(max(pull(tbl[.data$name_col]),na.rm = TRUE)),
+               NA_character_)) %>%
     filter(.data$condition == 1) %>%
     mutate(
       condition = "[INFO] - Unique value in the column")

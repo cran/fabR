@@ -49,7 +49,6 @@
 #' }
 #'
 #' @import dplyr ggplot2 tidytext
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_main_word <- function(
@@ -180,7 +179,6 @@ plot_main_word <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_histogram <- function(
@@ -292,7 +290,6 @@ plot_histogram <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_box <- function(
@@ -417,7 +414,6 @@ plot_box <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_date <- function(
@@ -545,7 +541,6 @@ plot_date <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_bar <- function(
@@ -657,7 +652,6 @@ plot_bar <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_density <- function(
@@ -770,7 +764,6 @@ plot_density <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_pie <- function(
@@ -905,7 +898,6 @@ plot_pie <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 plot_pie_valid_value <- function(
@@ -1040,7 +1032,6 @@ plot_pie_valid_value <- function(
 #' }
 #'
 #' @import dplyr ggplot2 DT janitor
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 summary_text <- function(
@@ -1149,7 +1140,6 @@ summary_text <- function(
 #' }
 #'
 #' @import dplyr ggplot2 DT
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 summary_numerical <- function(
@@ -1278,7 +1268,6 @@ summary_numerical <- function(
 #' }
 #'
 #' @import dplyr ggplot2 DT janitor
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 summary_category <- function(
@@ -1367,7 +1356,6 @@ summary_category <- function(
 #' }
 #'
 #' @import dplyr ggplot2
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 template_visual_report <- function(to){
@@ -1383,6 +1371,10 @@ template_visual_report <- function(to){
                exdir = paste0(to,"/temp_bookdown_report/file"))
 
   file.remove(paste0(to,"/temp_bookdown_report/file.zip"))
+  file.rename(
+    from = paste0(to,"/temp_bookdown_report/file/bookdown-template-main"),
+    to   = paste0(to,"/temp_bookdown_report/file/bookdown-template-master"))
+
   path <- "/temp_bookdown_report/file/bookdown-template-master"
   file.remove(paste0(to,path,"/02-tears.Rmd"))
   file.remove(paste0(to,path,"/03-race.Rmd"))
