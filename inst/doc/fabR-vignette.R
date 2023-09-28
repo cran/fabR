@@ -1,18 +1,22 @@
 ## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  eval = FALSE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE)
+
 
 ## ----setup--------------------------------------------------------------------
-install.packages("fabR",repos = "https://cloud.r-project.org/")
-
-# install.package("devtools")
-# devtools::install_github(repo = "https://github.com/guifabre/fabR", 
-#  auth_token = "ghp_xxx",force = TRUE)
-
-
-## -----------------------------------------------------------------------------
-library(fabR)
-fabR_help()
+#  # To update the R package in your R environment you may first need to remove
+#  # it, and use the exit command quit() to terminate the current R session.
+#  
+#  # To install the R package:
+#  install.packages('fabR')
+#  library(fabR)
+#  
+#  #if you need help with the package, please use:
+#  fabR_help()
+#  
 
