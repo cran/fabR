@@ -1,7 +1,7 @@
-d180f646fbd06dc244339d7a2f4399df *DESCRIPTION
+f652b975e4837cd4fb2a2a59bd749567 *DESCRIPTION
 6631ec87e6c135639ed3de29df332f6b *NAMESPACE
-5723273f046eae4910c05574e40df1ba *NEWS.md
-0e1b26df5e47d22918f329f3afecaacb *R/00-utils.R
+8f0a6f151aed6ceb2be8953b4f2eb254 *NEWS.md
+4940971c19a193d526976635d4d19d01 *R/00-utils.R
 d0fec5661b425a9b84e65f379f1c4445 *R/01-file_index.R
 e5be5e63f652f910a20f6dae87bc8958 *R/02-dates.R
 16eecfc023ab0693aeb2226d92ec8b46 *R/03-viz.R
@@ -9,9 +9,9 @@ e5be5e63f652f910a20f6dae87bc8958 *R/02-dates.R
 1dbed0b985d4899998436c8596105635 *R/deprecated.R
 1b54137d4ae82b40a266122de6d1201b *R/fabR-package.R
 d36c941c1b190242a0d944d9d7c77477 *README.md
-8a2b7d356d3310250e1f947d40b3aebf *build/vignette.rds
+66da51e51fb68154dffc7f922aa3bbfd *build/vignette.rds
 ebba441e0895168672c00a8114d93518 *inst/WORDLIST
-937d56d63a10426f36b23a9dc09f5708 *inst/doc/fabR-vignette.R
+37bf38467388c60babe8186bbd7e54cb *inst/doc/fabR-vignette.R
 e937eb092aed3590ddee8dc806a6a892 *inst/doc/fabR-vignette.Rmd
 4355fbcaa495283b83860093c798e8b5 *inst/doc/fabR-vignette.html
 c95f5a55d3e8f5941b030fa359c9fdd2 *man/add_index.Rd
@@ -22,7 +22,7 @@ fbfa8b70e557be037479bc2461507b22 *man/bookdown_open.Rd
 71b93b04095c93f41e4e9cf6f9115a74 *man/bookdown_render.Rd
 539ff98e0abc8f311b584b3f3a4df6ce *man/bookdown_template.Rd
 3e14b75bd07137dcd5c29bc3a03a4870 *man/collect_roxygen.Rd
-d6d7c0058627b6ded9f1df66cf722899 *man/deprecated.Rd
+3c25e52fee80b4f639ee60982b89d941 *man/deprecated.Rd
 eff6aa2f0494c80bd706ea7a6de58940 *man/fabR-package.Rd
 6682ea79488ea666630a3b8f4f0b3572 *man/fabR_help.Rd
 d8d20e5590bea43ad5afca43b3dd2d9e *man/file_index_create.Rd
