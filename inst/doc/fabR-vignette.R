@@ -17,6 +17,6 @@ knitr::opts_chunk$set(
 #  library(fabR)
 #  
 #  #if you need help with the package, please use:
-#  fabR_help()
+#  fabR_website()
 #  
 
