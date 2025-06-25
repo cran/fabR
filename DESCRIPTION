@@ -1,7 +1,7 @@
 Package: fabR
 Type: Package
 Title: Wrapper Functions Collection Used in Data Pipelines
-Version: 2.1.0
+Version: 2.1.1
 Authors@R: c(
     person("Guillaume", "Fabre", 
         role = c("aut", "cre"),
@@ -25,9 +25,9 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 Language: en-US
 NeedsCompilation: no
-Packaged: 2024-04-18 16:29:50 UTC; guill
+Packaged: 2025-06-25 20:31:57 UTC; guill
 Author: Guillaume Fabre [aut, cre],
   Maelstrom-Research [fnd]
 Maintainer: Guillaume Fabre <guijoseph.fabre@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-04-19 07:32:37 UTC
+Date/Publication: 2025-06-25 23:30:01 UTC
